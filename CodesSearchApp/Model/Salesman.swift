@@ -8,8 +8,30 @@
 import Foundation
 
 
-struct Salesman: Identifiable {
-    let id = UUID()
+struct Salesman: Identifiable, Equatable {
+    let id : UUID
     let name: String
     let areas: [String]
+    
+    init(id: UUID, name: String, areas: [String]) {
+         self.id = id
+         self.name = name
+         self.areas = areas
+     }
+    
+    init(name: String, areas: [String], uuidGenerator: UUIDGenerator = DefaultUUIDGenerator()) {
+        self.id = uuidGenerator.generate()
+        self.name = name
+        self.areas = areas
+    }
+}
+
+protocol UUIDGenerator {
+    func generate() -> UUID
+}
+
+struct DefaultUUIDGenerator: UUIDGenerator {
+    func generate() -> UUID {
+        return UUID()
+    }
 }

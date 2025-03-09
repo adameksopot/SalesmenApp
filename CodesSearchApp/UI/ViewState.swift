@@ -6,7 +6,7 @@
 //
 
 
-enum ViewState {
+enum ViewState : Equatable {
     case Loading
     case Error
     case Loaded(salesmen:[Salesman])

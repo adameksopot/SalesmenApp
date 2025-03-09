@@ -8,33 +8,27 @@
 import Foundation
 import Combine
 
-protocol SalesManViewModel : ObservableObject {
+protocol SalesmenViewModel : ObservableObject {
     var state: ViewState { get set }
     var query: String { get set }
-    func process(intent: Intent)
-    
+    func push(event: Event)
 }
 
-enum Intent {
-case FetchSalesmen
-case Search(query: String)
-}
-
-class SalesManViewModelImpl: SalesManViewModel, ObservableObject {
+class SalesmenViewModelImpl: SalesmenViewModel, ObservableObject {
     
     @Published var state: ViewState = .Loading
     @Published var query: String = ""
     
-    private let repository: SalesmanRepository
+    private let repository: SalesmenRepository
     private var cancellables = Set<AnyCancellable>()
     
-    init(repository: SalesmanRepository) {
+    init(repository: SalesmenRepository) {
         self.repository = repository
-        setupQuerySubscription()
+        subscribeToQueryEvents()
     }
     
-    func process(intent: Intent) {
-        switch intent {
+    func push(event: Event) {
+        switch event {
         case .FetchSalesmen:
             fetchSalesmen()
         case .Search(let query):
@@ -44,6 +38,7 @@ class SalesManViewModelImpl: SalesManViewModel, ObservableObject {
     
     private func fetchSalesmen() {
         Task { @MainActor in
+            sleep(2) // display loader briefly
             do {
                 let salesmen = try await repository.get()
                 state = salesmen.isEmpty ? .Empty : .Loaded(salesmen: salesmen)
@@ -79,28 +74,26 @@ class SalesManViewModelImpl: SalesManViewModel, ObservableObject {
     
     private func queryMatches(_ area: String, _ query: String) -> Bool {
         let normalizedArea = area.replacingOccurrences(of: "*", with: "")
-        let normalizedQuery = query.replacingOccurrences(of: "*", with: "")
-        
+
         if area.hasSuffix("*") {
-            return normalizedQuery.hasPrefix(normalizedArea)
-        } else if query.hasSuffix("*") {
-            return normalizedArea.hasPrefix(normalizedQuery)
+            return query.hasPrefix(normalizedArea) || normalizedArea.hasPrefix(query)
         }
-        return area == query
+
+        return area.hasPrefix(query) || query.hasPrefix(area)
     }
     
-    private func setupQuerySubscription() {
+    private func subscribeToQueryEvents() {
         $query
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
             .removeDuplicates()
             .sink { [weak self] query in
-                self?.process(intent: .Search(query: query))
+                self?.push(event: .Search(query: query))
             }
             .store(in: &cancellables)
     }
 }
 
-class FakeSalesViewModel: SalesManViewModel, ObservableObject {
+class FakeSalesmenViewModelImpl: SalesmenViewModel, ObservableObject {
     @Published var query: String = ""
     @Published var state: ViewState = .Loaded(salesmen: [
         Salesman(name: "Anna Müller", areas: ["73133", "76131"]),
@@ -110,9 +103,7 @@ class FakeSalesViewModel: SalesManViewModel, ObservableObject {
     ])
 
     
-    func process(intent: Intent) {
+    func push(event: Event) {
         
     }
 }
-
-

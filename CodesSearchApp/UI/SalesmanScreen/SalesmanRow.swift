@@ -11,12 +11,13 @@ import SwiftUI
 struct SalesmanRow: View {
     let salesman: Salesman
     @State private var isExpanded = false
+    private let theme = SalesMenTheme()
 
     var body: some View {
         VStack {
             HStack {
                 Circle()
-                    .fill(Color(.systemGray6))
+                    .fill(theme.searchBarBackgroundColor)
                     .frame(width: 40, height: 40)
                     .overlay(Text(String(salesman.name.prefix(1)))
                         .font(.headline)
@@ -30,7 +31,7 @@ struct SalesmanRow: View {
                     if isExpanded && !salesman.areas.isEmpty {
                         Text(salesman.areas.joined(separator: ", "))
                             .font(.system(size: 15, weight: .regular))
-                            .foregroundColor(Color.init(hex: 0x999999))
+                            .foregroundColor(theme.secondaryColor)
                             .transition(.opacity)
                     }
                 }
@@ -50,15 +51,15 @@ struct SalesmanRow: View {
             .background(Color.white)
             .frame(maxWidth: .infinity)
             
-            Divider().background(Color.init(hex: 0x00C6C5C9))
+            Divider().background(theme.dividerColor)
         }
     }
 }
 
-
-
-struct SalesmanRow_Previews: PreviewProvider {
+private struct SalesmanRow_Previews: PreviewProvider {
     static var previews: some View {
-        SalesmanRow(salesman: Salesman(name: "Adam", areas: ["123"]))
+        SalesmanRow(
+            salesman: Salesman(name: "Adam", areas: ["123"])
+        )
     }
 }

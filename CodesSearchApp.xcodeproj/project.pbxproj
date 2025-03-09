@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		664436292D7DBF2900436648 /* Quick in Frameworks */ = {isa = PBXBuildFile; productRef = 664436282D7DBF2900436648 /* Quick */; };
+		6644362C2D7DBF3900436648 /* Nimble in Frameworks */ = {isa = PBXBuildFile; productRef = 6644362B2D7DBF3900436648 /* Nimble */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		664435C52D7D762B00436648 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -59,6 +64,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				664436292D7DBF2900436648 /* Quick in Frameworks */,
+				6644362C2D7DBF3900436648 /* Nimble in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,6 +142,8 @@
 			);
 			name = CodesSearchAppTests;
 			packageProductDependencies = (
+				664436282D7DBF2900436648 /* Quick */,
+				6644362B2D7DBF3900436648 /* Nimble */,
 			);
 			productName = CodesSearchAppTests;
 			productReference = 664435C42D7D762B00436648 /* CodesSearchAppTests.xctest */;
@@ -178,6 +187,7 @@
 					};
 					664435C32D7D762B00436648 = {
 						CreatedOnToolsVersion = 16.2;
+						LastSwiftMigration = 1620;
 						TestTargetID = 664435B32D7D762A00436648;
 					};
 					664435CD2D7D762B00436648 = {
@@ -195,6 +205,10 @@
 			);
 			mainGroup = 664435AB2D7D762A00436648;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				664436272D7DBF2900436648 /* XCRemoteSwiftPackageReference "Quick" */,
+				6644362A2D7DBF3900436648 /* XCRemoteSwiftPackageReference "Nimble" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 664435B52D7D762A00436648 /* Products */;
 			projectDirPath = "";
@@ -448,6 +462,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U64B7353Q7;
@@ -457,6 +472,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.adam.example.setup.CodesSearchAppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CodesSearchApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CodesSearchApp";
@@ -467,6 +483,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U64B7353Q7;
@@ -556,6 +573,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		664436272D7DBF2900436648 /* XCRemoteSwiftPackageReference "Quick" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Quick/Quick.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		6644362A2D7DBF3900436648 /* XCRemoteSwiftPackageReference "Nimble" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Quick/Nimble.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		664436282D7DBF2900436648 /* Quick */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 664436272D7DBF2900436648 /* XCRemoteSwiftPackageReference "Quick" */;
+			productName = Quick;
+		};
+		6644362B2D7DBF3900436648 /* Nimble */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6644362A2D7DBF3900436648 /* XCRemoteSwiftPackageReference "Nimble" */;
+			productName = Nimble;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 664435AC2D7D762A00436648 /* Project object */;
 }
