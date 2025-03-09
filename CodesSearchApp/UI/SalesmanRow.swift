@@ -50,7 +50,7 @@ struct SalesmanRow: View {
             .background(Color.white)
             .frame(maxWidth: .infinity)
             
-            Divider()
+            Divider().background(Color.init(hex: 0x00C6C5C9))
         }
     }
 }

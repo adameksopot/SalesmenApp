@@ -8,7 +8,13 @@
 import Foundation
 import Combine
 
-class SalesmanListViewModel: ObservableObject {
+protocol SalesManViewModel : ObservableObject {
+    var salesmen: [Salesman] { get set }
+    var query: String { get set }
+    func fetchSalesmen() async
+    
+}
+class SalesManViewModelImpl: SalesManViewModel , ObservableObject {
     
     @Published var query: String = ""
     @Published var salesmen: [Salesman] = []
@@ -68,6 +74,20 @@ class SalesmanListViewModel: ObservableObject {
             return normalizedArea.hasPrefix(normalizedQuery)
         }
         return area == query
+    }
+}
+
+class FakeSalesViewModel: SalesManViewModel, ObservableObject {
+    @Published var query: String = ""
+    @Published var salesmen: [Salesman] = []
+    
+    func fetchSalesmen() async {
+        return self.salesmen = [
+            Salesman(name: "Anna Müller", areas: ["73133", "76131"]),
+            Salesman(name: "Bern Schmitt", areas: ["762*", "76300"]),
+            Salesman(name: "Carlos Ruiz", areas: ["80000", "801*"]),
+            Salesman(name: "Diana Prince", areas: ["900*", "90100"]),
+        ]
     }
 }
 

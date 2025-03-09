@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct CodesSearchAppApp: App {
     
-    @StateObject var viewModel = SalesmanListViewModel(repository: SalesmanRepositoryImpl())
+    @StateObject var viewModel = SalesManViewModelImpl(repository: SalesmanRepositoryImpl())
 
     var body: some Scene {
         WindowGroup {

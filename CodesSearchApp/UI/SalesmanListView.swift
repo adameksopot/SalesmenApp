@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct SalesmanListView: View {
-    @ObservedObject var viewModel : SalesmanListViewModel
+struct SalesmanListView<ViewModel: SalesManViewModel>: View {
+    @ObservedObject var viewModel : ViewModel
     
     var body: some View {
         
@@ -41,8 +41,7 @@ struct SalesmanListView: View {
         HStack {
             Image(systemName: "magnifyingglass").foregroundColor(.gray)
             TextField("Suche", text: $viewModel.query)
-            Button(action: { print("Microphone tapped")
-            }) { Image(systemName: "mic.fill").foregroundColor(.gray) }}
+            Button(action: { print("Microphone tapped") }) { Image(systemName: "mic.fill").foregroundColor(.gray) }}
         .padding(10)
         .background(Color(.systemGray6))
         .cornerRadius(8)
@@ -53,10 +52,8 @@ struct SalesmanListView: View {
     }
 }
 
-
 struct SalesmanListView_Previews: PreviewProvider {
     static var previews: some View {
-        // SalesmanListView(viewModel: )
-        Text("Hello")
+        SalesmanListView(viewModel: FakeSalesViewModel.init())
     }
 }
