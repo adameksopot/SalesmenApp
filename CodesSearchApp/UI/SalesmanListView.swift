@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct SalesmanListView: View {
-    @StateObject var viewModel = SalesmanRepository()
-    @State private var searchText = ""
+    @ObservedObject var viewModel : SalesmanListViewModel
     
     var body: some View {
         
@@ -17,7 +16,7 @@ struct SalesmanListView: View {
             ScrollView {
                 LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
                     Section {
-                        ForEach(viewModel.filteredSalesmen) { salesman in
+                        ForEach(viewModel.salesmen) { salesman in
                             SalesmanRow(salesman: salesman)
                         }
                     } header: { searchView }
@@ -33,6 +32,7 @@ struct SalesmanListView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Color(hex: 0x00327FF0, alpha: 0.94), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .task { await viewModel.fetchSalesmen() }
         }
     }
     
@@ -40,7 +40,7 @@ struct SalesmanListView: View {
         
         HStack {
             Image(systemName: "magnifyingglass").foregroundColor(.gray)
-            TextField("Suche", text: $searchText)
+            TextField("Suche", text: $viewModel.query)
             Button(action: { print("Microphone tapped")
             }) { Image(systemName: "mic.fill").foregroundColor(.gray) }}
         .padding(10)
@@ -56,6 +56,7 @@ struct SalesmanListView: View {
 
 struct SalesmanListView_Previews: PreviewProvider {
     static var previews: some View {
-        SalesmanListView()
+        // SalesmanListView(viewModel: )
+        Text("Hello")
     }
 }

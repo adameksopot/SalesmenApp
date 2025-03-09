@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct CodesSearchAppApp: App {
+    
+    @StateObject var viewModel = SalesmanListViewModel(repository: SalesmanRepositoryImpl())
+
     var body: some Scene {
         WindowGroup {
-            SalesmanListView()
+            SalesmanListView(viewModel: viewModel)
         }
     }
 }
