@@ -9,8 +9,10 @@ import SwiftUI
 
 
 struct SalesmenListView<ViewModel: SalesmenViewModel>: View {
+    
     @ObservedObject var viewModel: ViewModel
     private let theme: SalesMenTheme = SalesMenTheme()
+    
     var body: some View {
         NavigationView {
             ScrollView {
