@@ -25,13 +25,3 @@ struct Salesman: Identifiable, Equatable {
         self.areas = areas
     }
 }
-
-protocol UUIDGenerator {
-    func generate() -> UUID
-}
-
-struct DefaultUUIDGenerator: UUIDGenerator {
-    func generate() -> UUID {
-        return UUID()
-    }
-}

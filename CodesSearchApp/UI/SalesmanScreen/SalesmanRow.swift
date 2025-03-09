@@ -26,7 +26,7 @@ struct SalesmanRow: View {
                 VStack(alignment: .leading) {
                     Text(salesman.name)
                         .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.black)
+                        .foregroundColor(theme.textColor)
 
                     if isExpanded && !salesman.areas.isEmpty {
                         Text(salesman.areas.joined(separator: ", "))

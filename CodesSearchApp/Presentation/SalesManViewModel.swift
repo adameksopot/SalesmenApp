@@ -71,17 +71,13 @@ class SalesmenViewModelImpl: SalesmenViewModel, ObservableObject {
             }
         }
     }
-    
     private func queryMatches(_ area: String, _ query: String) -> Bool {
-        let normalizedArea = area.replacingOccurrences(of: "*", with: "")
-
-        if area.hasSuffix("*") {
-            return query.hasPrefix(normalizedArea) || normalizedArea.hasPrefix(query)
-        }
-
-        return area.hasPrefix(query) || query.hasPrefix(area)
+        if area == query { return true }
+        let normalizedQuery = query.hasSuffix("*") ? String(query.dropLast()) : query
+        let normalizedArea = area.hasSuffix("*") ? String(area.dropLast()) : area
+        return normalizedArea.hasPrefix(normalizedQuery) || normalizedQuery.hasPrefix(normalizedArea)
     }
-    
+
     private func subscribeToQueryEvents() {
         $query
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
@@ -94,6 +90,7 @@ class SalesmenViewModelImpl: SalesmenViewModel, ObservableObject {
 }
 
 class FakeSalesmenViewModelImpl: SalesmenViewModel, ObservableObject {
+    
     @Published var query: String = ""
     @Published var state: ViewState = .Loaded(salesmen: [
         Salesman(name: "Anna Müller", areas: ["73133", "76131"]),
@@ -103,7 +100,6 @@ class FakeSalesmenViewModelImpl: SalesmenViewModel, ObservableObject {
     ])
 
     
-    func push(event: Event) {
-        
-    }
+    func push(event: Event) {}
+    
 }
