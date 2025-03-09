@@ -11,7 +11,7 @@ import SwiftUI
 struct CodesSearchAppApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SalesmanListView()
         }
     }
 }
