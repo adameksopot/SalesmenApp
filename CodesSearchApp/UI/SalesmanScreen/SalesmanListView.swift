@@ -8,18 +8,14 @@
 import SwiftUI
 
 struct SalesmanListView<ViewModel: SalesManViewModel>: View {
-    @ObservedObject var viewModel : ViewModel
+    @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        
         NavigationView {
             ScrollView {
                 LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
-                    Section {
-                        ForEach(viewModel.salesmen) { salesman in
-                            SalesmanRow(salesman: salesman)
-                        }
-                    } header: { searchView }
+                    Section { contentView }
+                    header: { searchView }
                 }
             }
             .toolbar {
@@ -32,16 +28,34 @@ struct SalesmanListView<ViewModel: SalesManViewModel>: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Color(hex: 0x00327FF0, alpha: 0.94), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
-            .task { await viewModel.fetchSalesmen() }
+            .onAppear { viewModel.process(intent: .FetchSalesmen) }
+        }
+    }
+    
+    @ViewBuilder
+    private var contentView: some View {
+        switch viewModel.state {
+        case .Loading:
+            ProgressView()
+        case .Loaded(let salesmen):
+            ForEach(salesmen) { salesman in
+                SalesmanRow(salesman: salesman)
+            }
+        case .Empty:
+            Text("No salesmen found")
+        case .Error:
+            Text("Error:")
         }
     }
     
     private var searchView: some View {
-        
         HStack {
             Image(systemName: "magnifyingglass").foregroundColor(.gray)
             TextField("Suche", text: $viewModel.query)
-            Button(action: { print("Microphone tapped") }) { Image(systemName: "mic.fill").foregroundColor(.gray) }}
+            Button(action: { print("Microphone tapped") }) {
+                Image(systemName: "mic.fill").foregroundColor(.gray)
+            }
+        }
         .padding(10)
         .background(Color(.systemGray6))
         .cornerRadius(8)

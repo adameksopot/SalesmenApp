@@ -9,53 +9,66 @@ import Foundation
 import Combine
 
 protocol SalesManViewModel : ObservableObject {
-    var salesmen: [Salesman] { get set }
+    var state: ViewState { get set }
     var query: String { get set }
-    func fetchSalesmen() async
+    func process(intent: Intent)
     
 }
-class SalesManViewModelImpl: SalesManViewModel , ObservableObject {
+
+enum Intent {
+case FetchSalesmen
+case Search(query: String)
+}
+
+class SalesManViewModelImpl: SalesManViewModel, ObservableObject {
     
+    @Published var state: ViewState = .Loading
     @Published var query: String = ""
-    @Published var salesmen: [Salesman] = []
     
     private let repository: SalesmanRepository
-    var cancellables = Set<AnyCancellable>()
-
+    private var cancellables = Set<AnyCancellable>()
+    
     init(repository: SalesmanRepository) {
         self.repository = repository
-        textFieldSubscribe()
+        setupQuerySubscription()
     }
     
-    @MainActor
-    func fetchSalesmen() async {
-        do {
-            self.salesmen = try await repository.get() }
-        catch {
-            print("Error fetching salesmen: \(error)")
+    func process(intent: Intent) {
+        switch intent {
+        case .FetchSalesmen:
+            fetchSalesmen()
+        case .Search(let query):
+            handleQuery(query: query)
         }
     }
-
-    private func textFieldSubscribe() {
-        $query
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
-            .removeDuplicates()
-            .sink { [weak self] query in
-                self?.handleQuery(query: query)
+    
+    private func fetchSalesmen() {
+        Task { @MainActor in
+            do {
+                let salesmen = try await repository.get()
+                state = salesmen.isEmpty ? .Empty : .Loaded(salesmen: salesmen)
+            } catch {
+                state = .Error
             }
-            .store(in: &cancellables)
+        }
     }
     
     private func handleQuery(query: String) {
         Task { @MainActor in
             do {
                 let allSalesmen = try await repository.get()
-                if query.isEmpty { salesmen = allSalesmen }
-                else { salesmen = filterSalesmen(allSalesmen, matching: query) }
-            } catch { print("Error fetching salesmen: \(error)") }
+                if query.isEmpty {
+                    state = allSalesmen.isEmpty ? .Empty : .Loaded(salesmen: allSalesmen)
+                } else {
+                    let filteredSalesmen = filterSalesmen(allSalesmen, matching: query)
+                    state = filteredSalesmen.isEmpty ? .Empty : .Loaded(salesmen: filteredSalesmen)
+                }
+            } catch {
+                state = .Error
+            }
         }
     }
-
+    
     private func filterSalesmen(_ salesmen: [Salesman], matching query: String) -> [Salesman] {
         salesmen.filter { salesman in
             salesman.areas.contains { area in
@@ -75,19 +88,30 @@ class SalesManViewModelImpl: SalesManViewModel , ObservableObject {
         }
         return area == query
     }
+    
+    private func setupQuerySubscription() {
+        $query
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .sink { [weak self] query in
+                self?.process(intent: .Search(query: query))
+            }
+            .store(in: &cancellables)
+    }
 }
 
 class FakeSalesViewModel: SalesManViewModel, ObservableObject {
     @Published var query: String = ""
-    @Published var salesmen: [Salesman] = []
+    @Published var state: ViewState = .Loaded(salesmen: [
+        Salesman(name: "Anna Müller", areas: ["73133", "76131"]),
+        Salesman(name: "Bern Schmitt", areas: ["762*", "76300"]),
+        Salesman(name: "Carlos Ruiz", areas: ["80000", "801*"]),
+        Salesman(name: "Diana Prince", areas: ["900*", "90100"])
+    ])
+
     
-    func fetchSalesmen() async {
-        return self.salesmen = [
-            Salesman(name: "Anna Müller", areas: ["73133", "76131"]),
-            Salesman(name: "Bern Schmitt", areas: ["762*", "76300"]),
-            Salesman(name: "Carlos Ruiz", areas: ["80000", "801*"]),
-            Salesman(name: "Diana Prince", areas: ["900*", "90100"]),
-        ]
+    func process(intent: Intent) {
+        
     }
 }
 
